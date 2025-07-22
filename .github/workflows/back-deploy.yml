@@ -55,9 +55,9 @@ jobs:
           script: |
             echo "✅ Java 버전 확인"
             java -version
-
+            
             echo "🛑 기존 Spring Boot 프로세스 종료"
             pkill -f 'java -jar' || true
-
-            echo "🚀 새 애플리케이션 실행"
+            
+            echo "🚀 Spring Boot 실행"
             nohup java -jar /home/ubuntu/app/*.jar > app.log 2>&1 &
