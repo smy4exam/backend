@@ -57,7 +57,7 @@ jobs:
             java -version
             
             echo "🛑 기존 Spring Boot 프로세스 종료"
-            pkill -f 'java -jar' || true
+            pkill -f 'java -jar' || echo "No existing process"
             
-            echo "🚀 Spring Boot 실행"
-            nohup java -jar /home/ubuntu/app/*.jar > app.log 2>&1 &
+            echo "🚀 Spring Boot 애플리케이션 실행"
+            nohup java -jar /home/ubuntu/app/build/libs/*.jar > /home/ubuntu/app/app.log 2>&1 &
