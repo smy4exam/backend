@@ -45,22 +45,19 @@ jobs:
           source: "build/libs/*.jar"
           target: "/home/ubuntu/app"
 
-      # 6. EC2에서 기존 프로세스 종료 + JAR 실행
-      - name: Run JAR on EC2
+      # 6. EC2에서 JAR 실행
+      - name: Run Spring Boot App on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "🛠 Java 버전 확인"
+            echo "✅ Java 버전 확인"
             java -version
-            
+
             echo "🛑 기존 Spring Boot 프로세스 종료"
             pkill -f 'java -jar' || true
-            
+
             echo "🚀 새 애플리케이션 실행"
             nohup java -jar /home/ubuntu/app/*.jar > app.log 2>&1 &
-            
-            echo "📄 마지막 로그 확인"
-            tail -n 10 app.log
