@@ -44,7 +44,11 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            pkill -f 'java -jar' || echo "기존 프로세스 없음. 계속 진행합니다."
+#            pkill -f 'java -jar' || echo "기존 프로세스 없음. 계속 진행합니다."
+            # 8080 포트에서 실행 중인 기존 프로세스 종료
+              if lsof -i:8080 -t >/dev/null; then
+              kill -9 $(lsof -i:8080 -t)
+              fi
 
             cd /home/ubuntu/app
             nohup java -jar *.jar > app.log 2>&1 &
