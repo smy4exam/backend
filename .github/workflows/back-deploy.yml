@@ -53,11 +53,13 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            echo "✅ Java 버전 확인"
-            java -version
-            
-            echo "🛑 기존 Spring Boot 프로세스 종료"
-            pkill -f 'java -jar' || echo "No existing process"
-            
-            echo "🚀 Spring Boot 애플리케이션 실행"
-            nohup java -jar /home/ubuntu/app/build/libs/*.jar > /home/ubuntu/app/app.log 2>&1 &
+              sudo systemctl daemon-reload
+              sudo systemctl restart cinepick
+#            echo "✅ Java 버전 확인"
+#            java -version
+#
+#            echo "🛑 기존 Spring Boot 프로세스 종료"
+#            pkill -f 'java -jar' || echo "No existing process"
+#
+#            echo "🚀 Spring Boot 애플리케이션 실행"
+#            nohup java -jar /home/ubuntu/app/build/libs/*.jar > /home/ubuntu/app/app.log 2>&1 &
