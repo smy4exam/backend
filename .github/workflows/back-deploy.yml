@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 소스 코드 체크아웃
+      # 1. 소스코드 체크아웃
       - name: Checkout source code
         uses: actions/checkout@v3
 
@@ -20,13 +20,13 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # 3. Gradle 빌드 (테스트 제외)
+      # 3. Gradle 빌드 (테스트 생략)
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
 
-      # 4. EC2에 JAR 파일 복사
+      # 4. EC2에 JAR 전송
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.3
         with:
@@ -36,28 +36,26 @@ jobs:
           source: "build/libs/*.jar"
           target: "/home/ubuntu/app"
 
-      # 5. EC2에서 기존 앱 종료 후 새 앱 실행
-      - name: Run Spring Boot App on EC2 (nohup)
+      # 5. EC2에서 Spring Boot 애플리케이션 실행
+      - name: Run Spring Boot App on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-#            pkill -f 'java -jar' || echo "기존 프로세스 없음. 계속 진행합니다."
-            # 8080 포트에서 실행 중인 기존 프로세스 종료
-              echo "🛑 기존 8080 포트 프로세스 종료 시도"
-              sudo lsof -t -i:8080 | xargs --no-run-if-empty sudo kill -9
-              
-              echo "🚀 새 애플리케이션 실행"
-              cd /home/ubuntu/app
-              
-              JAR_FILE=$(ls -t *.jar | grep -v plain | head -n 1)
+            echo "🛑 기존 프로세스 종료"
+            sudo lsof -t -i:8080 | xargs --no-run-if-empty sudo kill -9
 
-              echo "✅ 실행할 JAR: $JAR_FILE"
-              nohup java -jar "$JAR_FILE" > app.log 2>&1 &
-              
-              echo "📜 최근 로그 출력"
-              tail -n 20 app.log
-              
-              echo "🎉 배포 완료"
+            echo "🚀 새 애플리케이션 실행"
+            cd /home/ubuntu/app
+
+            JAR_FILE=$(ls *.jar | grep -v plain | head -n 1)
+            echo "✅ 실행할 JAR: $JAR_FILE"
+
+            nohup java -jar "$JAR_FILE" > app.log 2>&1 &
+
+            echo "📄 최근 로그 출력"
+            tail -n 20 app.log
+
+            echo "🎉 배포 완료"
