@@ -45,7 +45,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             echo "🛑 기존 프로세스 종료"
-            pkill -f 'java -jar' || echo "실행 중인 앱 없음"
+            pkill -f 'java -jar' || true
 
             echo "🚀 새 애플리케이션 실행"
             cd /home/ubuntu/app
